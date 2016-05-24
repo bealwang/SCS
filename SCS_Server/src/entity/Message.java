@@ -9,15 +9,12 @@ public class Message implements Serializable{
     private int msId;
     private String msTitle;
     private String msBody;
+    private String msTime;
     private String ownerId;
+    private String ownerName;
     
     private static final long serialVersionUID = 1L;
     public Message(){};
-    public Message(String ownerId, String msTitle, String msBody){
-        this.ownerId = ownerId;
-        this.msTitle = msTitle;
-        this.msBody = msBody;
-    }
     
     public int getMsId() {
         return msId;
@@ -42,6 +39,18 @@ public class Message implements Serializable{
     }
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
+    }
+    public String getOwnerName() {
+        return ownerName;
+    }
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+    public String getMsTime() {
+        return msTime;
+    }
+    public void setMsTime(String msTime) {
+        this.msTime = msTime;
     }
     
 }

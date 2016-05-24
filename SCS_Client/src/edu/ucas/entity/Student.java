@@ -16,6 +16,11 @@ public class Student implements Serializable{
         this.userName = userName;
     }
     
+    public void show() {
+        System.out.println("phone_number:" + this.phoneNumber + "  user_name:"
+                + this.userName);
+    }
+    
     public String getPhoneNumber() {
         return phoneNumber;
     }

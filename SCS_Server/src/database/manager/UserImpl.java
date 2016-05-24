@@ -36,7 +36,8 @@ public class UserImpl implements UserInterface{
             rs = ps.executeQuery();
             if (rs.next()) {
                 String stuName = rs.getString("username");
-                stu = new Student(phoneNumber, stuName);
+                String passWord = rs.getString("password");
+                stu = new Student(phoneNumber, stuName, passWord);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,15 +110,18 @@ public class UserImpl implements UserInterface{
         ResultSet rs = null;
         try {
             con = JDBCUtils.getConnection();
-            String sql = "select * from message";
+            String sql = "select user.username, message.* from user, message where "
+                    + "message.owner = user.phone_number";
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
                 ms = new Message();
-                ms.setMsId(rs.getInt(1));
-                ms.setOwnerId(rs.getString(2));
-                ms.setMsTitle(rs.getString(3));
-                ms.setMsBody(rs.getString(4));
+                ms.setMsId(rs.getInt("ms_id"));
+                ms.setOwnerId(rs.getString("owner"));
+                ms.setMsTime(rs.getString("ms_time"));
+                ms.setMsTitle(rs.getString("ms_title"));
+                ms.setMsBody(rs.getString("ms_body"));
+                ms.setOwnerName(rs.getString("username"));
                 retList.add(ms);
             }
         } catch (SQLException e) {
@@ -138,16 +142,19 @@ public class UserImpl implements UserInterface{
         ResultSet rs = null;
         try {
             con = JDBCUtils.getConnection();
-            String sql = "select * from message where owner = ?";
+            String sql = "select user.username, message.* from user, message where "
+                    + "message.owner = ? and message.owner = user.phone_number";
             ps = con.prepareStatement(sql);
             ps.setString(1, phoneNumber);
             rs = ps.executeQuery();
             while (rs.next()) {
                 ms = new Message();
-                ms.setMsId(rs.getInt(1));
-                ms.setOwnerId(rs.getString(2));
-                ms.setMsTitle(rs.getString(3));
-                ms.setMsBody(rs.getString(4));
+                ms.setMsId(rs.getInt("ms_id"));
+                ms.setOwnerId(rs.getString("owner"));
+                ms.setMsTitle(rs.getString("ms_title"));
+                ms.setMsBody(rs.getString("ms_body"));
+                ms.setMsTime(rs.getString("ms_time"));
+                ms.setOwnerName(rs.getString("username"));
                 retList.add(ms);
             }
         } catch (SQLException e) {
@@ -158,7 +165,6 @@ public class UserImpl implements UserInterface{
         }
         return retList;
     }
-    
     @Override
     public boolean setMessage(String owner, String msTitle, String msBody) {
         // TODO Auto-generated method stub
@@ -208,5 +214,29 @@ public class UserImpl implements UserInterface{
             JDBCUtils.free(null, ps, con);
         }
         return true;
+    }
+    
+    @Override
+    public String getPassWord(String phoneNumber) {
+        // TODO Auto-generated method stub
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            con = JDBCUtils.getConnection();
+            String sql = "select password from user where phone_number = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, phoneNumber);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("password");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally
+        {
+            JDBCUtils.free(null, ps, con);
+        }
+        return null;
     }
 }
